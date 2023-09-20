@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gym.mapper.StoreMapper">
+
+    <resultMap type="Store" id="StoreResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="num"    column="num"    />
+        <result property="city"    column="city"    />
+        <result property="province"    column="province"    />
+        <result property="address"    column="address"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="shopowner"    column="shopowner"    />
+        <result property="shopPhone"    column="shop_phone"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="createtime"    column="createtime"    />
+        <result property="modifytime"    column="modifytime"    />
+        <result property="deleted"    column="deleted"    />
+    </resultMap>
+
+    <sql id="selectStoreVo">
+        select id, name, num, city, province, address, quantity, shopowner, shop_phone, remarks, createtime, modifytime, deleted from store
+    </sql>
+
+    <select id="selectStoreList" parameterType="Store" resultMap="StoreResult">
+        <include refid="selectStoreVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+        </where>
+    </select>
+
+    <select id="selectStoreById" parameterType="Long" resultMap="StoreResult">
+        <include refid="selectStoreVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getProvinceStoreCount" resultType="com.ruoyi.gym.bo.StatisticBo">
+        SELECT province AS name , count(province) AS value FROM store WHERE deleted=0
+        GROUP BY province
+
+    </select>
+
+    <insert id="insertStore" parameterType="Store" useGeneratedKeys="true" keyProperty="id">
+        insert into store
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="num != null">num,</if>
+            <if test="city != null and city != ''">city,</if>
+            <if test="province != null and province != ''">province,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="shopowner != null and shopowner != ''">shopowner,</if>
+            <if test="shopPhone != null and shopPhone != ''">shop_phone,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="modifytime != null">modifytime,</if>
+            <if test="deleted != null">deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="num != null">#{num},</if>
+            <if test="city != null and city != ''">#{city},</if>
+            <if test="province != null and province != ''">#{province},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="shopowner != null and shopowner != ''">#{shopowner},</if>
+            <if test="shopPhone != null and shopPhone != ''">#{shopPhone},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="modifytime != null">#{modifytime},</if>
+            <if test="deleted != null">#{deleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStore" parameterType="Store">
+        update store
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="num != null">num = #{num},</if>
+            <if test="city != null and city != ''">city = #{city},</if>
+            <if test="province != null and province != ''">province = #{province},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="shopowner != null and shopowner != ''">shopowner = #{shopowner},</if>
+            <if test="shopPhone != null and shopPhone != ''">shop_phone = #{shopPhone},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="modifytime != null">modifytime = #{modifytime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStoreById" parameterType="Long">
+        delete from store where id = #{id}
+    </delete>
+
+    <delete id="deleteStoreByIds" parameterType="String">
+        delete from store where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

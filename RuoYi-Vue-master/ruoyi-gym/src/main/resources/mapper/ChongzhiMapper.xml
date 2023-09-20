@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gym.mapper.ChongzhiMapper">
+
+    <resultMap type="Chongzhi" id="ChongzhiResult">
+        <result property="id"    column="id"    />
+        <result property="memberid"    column="memberid"    />
+        <result property="memberName"    column="memberName"    />
+        <result property="typeid"    column="typeid"    />
+        <result property="typeName"    column="typeName"    />
+        <result property="money"    column="money"    />
+        <result property="ssmoney"    column="ssmoney"    />
+        <result property="zlmoney"    column="zlmoney"    />
+        <result property="date"    column="date"    />
+        <result property="czjine"    column="czjine"    />
+        <result property="beizhu"    column="beizhu"    />
+        <result property="czStatic"    column="czStatic"    />
+        <result property="createtime"    column="createtime"    />
+        <result property="modifytime"    column="modifytime"    />
+        <result property="deleted"    column="deleted"    />
+    </resultMap>
+
+    <sql id="selectChongzhiVo">
+        select id, memberid, typeid, money, ssmoney, zlmoney, date, czjine, beizhu, czStatic, createtime, modifytime, deleted from chongzhi
+    </sql>
+
+    <select id="selectChongzhiList" parameterType="Chongzhi" resultMap="ChongzhiResult">
+        SELECT * FROM `chongzhi` cz
+        LEFT JOIN (SELECT * FROM `member` WHERE deleted=0) mem
+        ON cz.`memberid`=mem.memberId
+        LEFT JOIN (SELECT * FROM `membertype` WHERE deleted=0 ) memtype
+        ON cz.`typeid`=memtype.typeId
+        <where>
+            <if test="memberName != null "> and memberName = #{memberName}</if>
+            <if test="typeName != null "> and typeName = #{typeName}</if>
+         and cz.deleted=0
+        </where>
+    </select>
+
+    <select id="selectChongzhiById" parameterType="Long" resultMap="ChongzhiResult">
+        <include refid="selectChongzhiVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertChongzhi" parameterType="Chongzhi" useGeneratedKeys="true" keyProperty="id">
+        insert into chongzhi
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="memberid != null">memberid,</if>
+            <if test="typeid != null">typeid,</if>
+            <if test="money != null">money,</if>
+            <if test="ssmoney != null">ssmoney,</if>
+            <if test="zlmoney != null">zlmoney,</if>
+            <if test="date != null">date,</if>
+            <if test="czjine != null">czjine,</if>
+            <if test="beizhu != null and beizhu != ''">beizhu,</if>
+            <if test="czStatic != null">czStatic,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="modifytime != null">modifytime,</if>
+            <if test="deleted != null">deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="memberid != null">#{memberid},</if>
+            <if test="typeid != null">#{typeid},</if>
+            <if test="money != null">#{money},</if>
+            <if test="ssmoney != null">#{ssmoney},</if>
+            <if test="zlmoney != null">#{zlmoney},</if>
+            <if test="date != null">#{date},</if>
+            <if test="czjine != null">#{czjine},</if>
+            <if test="beizhu != null and beizhu != ''">#{beizhu},</if>
+            <if test="czStatic != null">#{czStatic},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="modifytime != null">#{modifytime},</if>
+            <if test="deleted != null">#{deleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateChongzhi" parameterType="Chongzhi">
+        update chongzhi
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="memberid != null">memberid = #{memberid},</if>
+            <if test="typeid != null">typeid = #{typeid},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="ssmoney != null">ssmoney = #{ssmoney},</if>
+            <if test="zlmoney != null">zlmoney = #{zlmoney},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="czjine != null">czjine = #{czjine},</if>
+            <if test="beizhu != null and beizhu != ''">beizhu = #{beizhu},</if>
+            <if test="czStatic != null">czStatic = #{czStatic},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="modifytime != null">modifytime = #{modifytime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChongzhiById" parameterType="Long">
+        update chongzhi set deleted=1 where id = #{id}
+    </delete>
+
+    <delete id="deleteChongzhiByIds" parameterType="String">
+        update chongzhi set deleted=1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

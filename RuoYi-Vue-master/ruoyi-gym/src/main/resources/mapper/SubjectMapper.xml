@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gym.mapper.SubjectMapper">
+
+    <resultMap type="Subject" id="SubjectResult">
+        <result property="subId"    column="subId"    />
+        <result property="subname"    column="subname"    />
+        <result property="sellingPrice"    column="sellingPrice"    />
+        <result property="createtime"    column="createtime"    />
+        <result property="modifytime"    column="modifytime"    />
+        <result property="deleted"    column="deleted"    />
+        <result property="beginTime"    column="beginTime"    />
+        <result property="endTime"    column="endTime"    />
+    </resultMap>
+
+    <sql id="selectSubjectVo">
+        select subId, subname, sellingPrice, createtime, modifytime, deleted ,beginTime , endTime from subject
+    </sql>
+
+    <select id="selectSubjectList" parameterType="Subject" resultMap="SubjectResult">
+        <include refid="selectSubjectVo"/>
+        <where>
+            <if test="subname != null  and subname != ''"> and subname like concat('%', #{subname}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectSubjectBySubId" parameterType="Long" resultMap="SubjectResult">
+        <include refid="selectSubjectVo"/>
+        where subId = #{subId}
+    </select>
+    <select id="getAllSubjects" resultType="com.ruoyi.gym.domain.Subject">
+        select * from subject where deleted=0
+    </select>
+
+    <insert id="insertSubject" parameterType="Subject" useGeneratedKeys="true" keyProperty="subId">
+        insert into subject
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="subname != null and subname != ''">subname,</if>
+            <if test="sellingPrice != null">sellingPrice,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="modifytime != null">modifytime,</if>
+            <if test="deleted != null">deleted,</if>
+            <if test="beginTime != null">beginTime,</if>
+            <if test="endTime != null">endTime,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="subname != null and subname != ''">#{subname},</if>
+            <if test="sellingPrice != null">#{sellingPrice},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="modifytime != null">#{modifytime},</if>
+            <if test="deleted != null">#{deleted},</if>
+            <if test="beginTime != null">#{beginTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSubject" parameterType="Subject">
+        update subject
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="subname != null and subname != ''">subname = #{subname},</if>
+            <if test="sellingPrice != null">sellingPrice = #{sellingPrice},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="modifytime != null">modifytime = #{modifytime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+            <if test="beginTime != null">beginTime = #{beginTime},</if>
+            <if test="endTime != null">endTime = #{endTime},</if>
+        </trim>
+        where subId = #{subId}
+    </update>
+
+    <delete id="deleteSubjectBySubId" parameterType="Long">
+        update subject set deleted=1 where subId = #{subId}
+    </delete>
+
+    <delete id="deleteSubjectBySubIds" parameterType="String">
+        update subject set deleted=1 where subId in
+        <foreach item="subId" collection="array" open="(" separator="," close=")">
+            #{subId}
+        </foreach>
+    </delete>
+</mapper>

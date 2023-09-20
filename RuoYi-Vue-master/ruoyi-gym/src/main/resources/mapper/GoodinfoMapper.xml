@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gym.mapper.GoodinfoMapper">
+
+    <resultMap type="Goodinfo" id="GoodinfoResult">
+        <result property="id"    column="id"    />
+        <result property="goodsid"    column="goodsid"    />
+        <result property="goodsName"    column="goodsName"    />
+        <result property="memberid"    column="memberid"    />
+        <result property="memberName"    column="memberName"    />
+        <result property="count"    column="count"    />
+        <result property="price"    column="price"    />
+        <result property="remark"    column="remark"    />
+        <result property="createtime"    column="createtime"    />
+        <result property="modifytime"    column="modifytime"    />
+        <result property="deleted"    column="deleted"    />
+    </resultMap>
+
+    <sql id="selectGoodinfoVo">
+        select id, goodsid, memberid, count, price, remark, createtime, modifytime, deleted from goodinfo
+    </sql>
+
+    <select id="selectGoodinfoList" parameterType="Goodinfo" resultMap="GoodinfoResult">
+        SELECT * FROM `goodinfo` ginfo
+        LEFT JOIN (SELECT * FROM `goods` WHERE deleted=0) good
+        ON ginfo.`goodsid`=good.goodsId
+        LEFT JOIN (SELECT * FROM `member`WHERE deleted=0) mem
+        ON ginfo.`memberid`=mem.memberId
+        <where>
+            <if test="goodsName != null "> and goodsName = #{goodsName}</if>
+            <if test="memberName != null "> and memberName = #{memberName}</if>
+        and  ginfo.`deleted`=0
+        </where>
+    </select>
+
+    <select id="selectGoodinfoById" parameterType="Long" resultMap="GoodinfoResult">
+        <include refid="selectGoodinfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGoodinfo" parameterType="Goodinfo" useGeneratedKeys="true" keyProperty="id">
+        insert into goodinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsid != null">goodsid,</if>
+            <if test="memberid != null">memberid,</if>
+            <if test="count != null">count,</if>
+            <if test="price != null">price,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="modifytime != null">modifytime,</if>
+            <if test="deleted != null">deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsid != null">#{goodsid},</if>
+            <if test="memberid != null">#{memberid},</if>
+            <if test="count != null">#{count},</if>
+            <if test="price != null">#{price},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="modifytime != null">#{modifytime},</if>
+            <if test="deleted != null">#{deleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGoodinfo" parameterType="Goodinfo">
+        update goodinfo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsid != null">goodsid = #{goodsid},</if>
+            <if test="memberid != null">memberid = #{memberid},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="modifytime != null">modifytime = #{modifytime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGoodinfoById" parameterType="Long">
+        update goodinfo set deleted=1 where id = #{id}
+    </delete>
+
+    <delete id="deleteGoodinfoByIds" parameterType="String">
+        update goodinfo set deleted=1  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

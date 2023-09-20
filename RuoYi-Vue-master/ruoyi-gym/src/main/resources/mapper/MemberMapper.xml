@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gym.mapper.MemberMapper">
+
+    <resultMap type="Member" id="MemberResult">
+        <result property="memberId"    column="memberId"    />
+        <result property="memberName"    column="memberName"    />
+        <result property="memberPhone"    column="memberPhone"    />
+        <result property="memberSex"    column="memberSex"    />
+        <result property="memberAge"    column="memberAge"    />
+        <result property="memberTypes"    column="memberTypes"    />
+        <result property="menberDate"    column="menberDate"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="memberStatic"    column="memberStatic"    />
+        <result property="memberbalance"    column="memberbalance"    />
+        <result property="memberxufei"    column="memberxufei"    />
+        <result property="createtime"    column="createtime"    />
+        <result property="modifytime"    column="modifytime"    />
+        <result property="deleted"    column="deleted"    />
+    </resultMap>
+
+    <sql id="selectMemberVo">
+        select memberId, memberName, memberPhone, memberSex, memberAge, memberTypes, menberDate, birthday, memberStatic, memberbalance, memberxufei, createtime, modifytime, deleted from member
+    </sql>
+
+    <select id="selectMemberList" parameterType="Member" resultMap="MemberResult">
+        <include refid="selectMemberVo"/>
+        <where>
+            <if test="memberName != null  and memberName != ''"> and memberName like concat('%', #{memberName}, '%')</if>
+            <if test="memberTypes != null "> and memberTypes = #{memberTypes}</if>
+        </where>
+    </select>
+
+    <select id="selectMemberByMemberId" parameterType="Long" resultMap="MemberResult">
+        <include refid="selectMemberVo"/>
+        where memberId = #{memberId}
+    </select>
+    <select id="getAllMembers" resultType="com.ruoyi.gym.domain.Member">
+        select * from member where deleted=0
+    </select>
+
+    <insert id="insertMember" parameterType="Member" useGeneratedKeys="true" keyProperty="memberId">
+        insert into member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="memberName != null and memberName != ''">memberName,</if>
+            <if test="memberPhone != null and memberPhone != ''">memberPhone,</if>
+            <if test="memberSex != null">memberSex,</if>
+            <if test="memberAge != null">memberAge,</if>
+            <if test="memberTypes != null">memberTypes,</if>
+            <if test="menberDate != null">menberDate,</if>
+            <if test="birthday != null and birthday != ''">birthday,</if>
+            <if test="memberStatic != null">memberStatic,</if>
+            <if test="memberbalance != null">memberbalance,</if>
+            <if test="memberxufei != null">memberxufei,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="modifytime != null">modifytime,</if>
+            <if test="deleted != null">deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="memberName != null and memberName != ''">#{memberName},</if>
+            <if test="memberPhone != null and memberPhone != ''">#{memberPhone},</if>
+            <if test="memberSex != null">#{memberSex},</if>
+            <if test="memberAge != null">#{memberAge},</if>
+            <if test="memberTypes != null">#{memberTypes},</if>
+            <if test="menberDate != null">#{menberDate},</if>
+            <if test="birthday != null and birthday != ''">#{birthday},</if>
+            <if test="memberStatic != null">#{memberStatic},</if>
+            <if test="memberbalance != null">#{memberbalance},</if>
+            <if test="memberxufei != null">#{memberxufei},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="modifytime != null">#{modifytime},</if>
+            <if test="deleted != null">#{deleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMember" parameterType="Member">
+        update member
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="memberName != null and memberName != ''">memberName = #{memberName},</if>
+            <if test="memberPhone != null and memberPhone != ''">memberPhone = #{memberPhone},</if>
+            <if test="memberSex != null">memberSex = #{memberSex},</if>
+            <if test="memberAge != null">memberAge = #{memberAge},</if>
+            <if test="memberTypes != null">memberTypes = #{memberTypes},</if>
+            <if test="menberDate != null">menberDate = #{menberDate},</if>
+            <if test="birthday != null and birthday != ''">birthday = #{birthday},</if>
+            <if test="memberStatic != null">memberStatic = #{memberStatic},</if>
+            <if test="memberbalance != null">memberbalance = #{memberbalance},</if>
+            <if test="memberxufei != null">memberxufei = #{memberxufei},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="modifytime != null">modifytime = #{modifytime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+        </trim>
+        where memberId = #{memberId}
+    </update>
+
+    <delete id="deleteMemberByMemberId" parameterType="Long">
+        delete from member where memberId = #{memberId}
+    </delete>
+
+    <delete id="deleteMemberByMemberIds" parameterType="String">
+        delete from member where memberId in
+        <foreach item="memberId" collection="array" open="(" separator="," close=")">
+            #{memberId}
+        </foreach>
+    </delete>
+</mapper>

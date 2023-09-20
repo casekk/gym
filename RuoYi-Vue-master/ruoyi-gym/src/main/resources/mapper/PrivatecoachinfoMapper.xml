@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gym.mapper.PrivatecoachinfoMapper">
+
+    <resultMap type="Privatecoachinfo" id="PrivatecoachinfoResult">
+        <result property="pid"    column="pid"    />
+        <result property="memberid"    column="memberid"    />
+        <result property="memberName"    column="memberName"    />
+        <result property="coachid"    column="coachid"    />
+        <result property="coachName"    column="coachName"    />
+        <result property="subjectid"    column="subjectid"    />
+        <result property="subname"    column="subname"    />
+        <result property="count"    column="count"    />
+        <result property="countprice"    column="countprice"    />
+        <result property="realprice"    column="realprice"    />
+        <result property="date"    column="date"    />
+        <result property="state"    column="state"    />
+        <result property="remark" column="remark"/>
+        <result property="createtime"    column="createtime"    />
+        <result property="modifytime"    column="modifytime"    />
+        <result property="deleted"    column="deleted"    />
+    </resultMap>
+
+    <sql id="selectPrivatecoachinfoVo">
+        select pid, memberid, coachid, subjectid, count, countprice, realprice, date,state, remark, createtime, modifytime, deleted from privatecoachinfo
+    </sql>
+
+    <select id="selectPrivatecoachinfoList" parameterType="Privatecoachinfo" resultMap="PrivatecoachinfoResult">
+        SELECT * FROM `privatecoachinfo` priv
+        LEFT JOIN (SELECT * FROM `member` WHERE deleted=0) mem
+        ON priv.`memberid`=mem.memberId
+        LEFT JOIN (SELECT * FROM `coach` WHERE deleted=0) coa
+        ON priv.`coachid`=coa.coachId
+        LEFT JOIN (SELECT * FROM `subject` WHERE deleted=0) sub
+        ON priv.`subjectid`=sub.subId
+        <where>
+            <if test="memberName != null "> and memberName = #{memberName}</if>
+            <if test="coachName != null "> and coachName = #{coachName}</if>
+            <if test="subname != null "> and subname = #{subname}</if>
+        and priv.deleted=0
+        </where>
+    </select>
+
+    <select id="selectPrivatecoachinfoByPid" parameterType="Long" resultMap="PrivatecoachinfoResult">
+        <include refid="selectPrivatecoachinfoVo"/>
+        where pid = #{pid}
+    </select>
+
+    <insert id="insertPrivatecoachinfo" parameterType="Privatecoachinfo" useGeneratedKeys="true" keyProperty="pid">
+        insert into privatecoachinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="memberid != null">memberid,</if>
+            <if test="coachid != null">coachid,</if>
+            <if test="subjectid != null">subjectid,</if>
+            <if test="count != null">count,</if>
+            <if test="countprice != null">countprice,</if>
+            <if test="realprice != null">realprice,</if>
+            <if test="date != null">date,</if>
+            <if test="state != null">state,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="modifytime != null">modifytime,</if>
+            <if test="deleted != null">deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="memberid != null">#{memberid},</if>
+            <if test="coachid != null">#{coachid},</if>
+            <if test="subjectid != null">#{subjectid},</if>
+            <if test="count != null">#{count},</if>
+            <if test="countprice != null">#{countprice},</if>
+            <if test="realprice != null">#{realprice},</if>
+            <if test="date != null">#{date},</if>
+            <if test="state != null">#{state},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="modifytime != null">#{modifytime},</if>
+            <if test="deleted != null">#{deleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePrivatecoachinfo" parameterType="Privatecoachinfo">
+        update privatecoachinfo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="memberid != null">memberid = #{memberid},</if>
+            <if test="coachid != null">coachid = #{coachid},</if>
+            <if test="subjectid != null">subjectid = #{subjectid},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="countprice != null">countprice = #{countprice},</if>
+            <if test="realprice != null">realprice = #{realprice},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="modifytime != null">modifytime = #{modifytime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+        </trim>
+        where pid = #{pid}
+    </update>
+
+    <delete id="deletePrivatecoachinfoByPid" parameterType="Long">
+        update privatecoachinfo set deleted=1 where pid = #{pid}
+    </delete>
+
+    <delete id="deletePrivatecoachinfoByPids" parameterType="String">
+        update privatecoachinfo set deleted=1 where pid in
+        <foreach item="pid" collection="array" open="(" separator="," close=")">
+            #{pid}
+        </foreach>
+    </delete>
+</mapper>

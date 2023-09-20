@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gym.mapper.GoodsMapper">
+
+    <resultMap type="Goods" id="GoodsResult">
+        <result property="goodsId"    column="goodsId"    />
+        <result property="goodsName"    column="goodsName"    />
+        <result property="unit"    column="unit"    />
+        <result property="unitPrice"    column="unitPrice"    />
+        <result property="sellPrice"    column="sellPrice"    />
+        <result property="inventory"    column="inventory"    />
+        <result property="remark"    column="remark"    />
+        <result property="createtime"    column="createtime"    />
+        <result property="modifytime"    column="modifytime"    />
+        <result property="deleted"    column="deleted"    />
+    </resultMap>
+
+    <sql id="selectGoodsVo">
+        select goodsId, goodsName, unit, unitPrice, sellPrice, inventory, remark, createtime, modifytime, deleted from goods
+    </sql>
+
+    <select id="selectGoodsList" parameterType="Goods" resultMap="GoodsResult">
+        <include refid="selectGoodsVo"/>
+        <where>
+            <if test="goodsName != null  and goodsName != ''"> and goodsName like concat('%', #{goodsName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectGoodsByGoodsId" parameterType="Long" resultMap="GoodsResult">
+        <include refid="selectGoodsVo"/>
+        where goodsId = #{goodsId}
+    </select>
+    <select id="getAllGoods" resultType="com.ruoyi.gym.domain.Goods">
+        select * from goods where deleted=0
+    </select>
+
+    <insert id="insertGoods" parameterType="Goods" useGeneratedKeys="true" keyProperty="goodsId">
+        insert into goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsName != null and goodsName != ''">goodsName,</if>
+            <if test="unit != null and unit != ''">unit,</if>
+            <if test="unitPrice != null">unitPrice,</if>
+            <if test="sellPrice != null">sellPrice,</if>
+            <if test="inventory != null">inventory,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="modifytime != null">modifytime,</if>
+            <if test="deleted != null">deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsName != null and goodsName != ''">#{goodsName},</if>
+            <if test="unit != null and unit != ''">#{unit},</if>
+            <if test="unitPrice != null">#{unitPrice},</if>
+            <if test="sellPrice != null">#{sellPrice},</if>
+            <if test="inventory != null">#{inventory},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="modifytime != null">#{modifytime},</if>
+            <if test="deleted != null">#{deleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGoods" parameterType="Goods">
+        update goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsName != null and goodsName != ''">goodsName = #{goodsName},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="unitPrice != null">unitPrice = #{unitPrice},</if>
+            <if test="sellPrice != null">sellPrice = #{sellPrice},</if>
+            <if test="inventory != null">inventory = #{inventory},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="modifytime != null">modifytime = #{modifytime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+        </trim>
+        where goodsId = #{goodsId}
+    </update>
+
+    <delete id="deleteGoodsByGoodsId" parameterType="Long">
+        update goods set deleted=1 where goodsId = #{goodsId}
+    </delete>
+
+    <delete id="deleteGoodsByGoodsIds" parameterType="String">
+        update goods set deleted=1 where goodsId in
+        <foreach item="goodsId" collection="array" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gym.mapper.EquipmentMapper">
+
+    <resultMap type="Equipment" id="EquipmentResult">
+        <result property="eqId"    column="eqId"    />
+        <result property="eqName"    column="eqName"    />
+        <result property="eqText"    column="eqText"    />
+        <result property="createtime"    column="createtime"    />
+        <result property="modifytime"    column="modifytime"    />
+        <result property="deleted"    column="deleted"    />
+        <result property="num"    column="num"    />
+    </resultMap>
+
+    <sql id="selectEquipmentVo">
+        select eqId, eqName, eqText, createtime, modifytime, deleted , num from equipment
+    </sql>
+
+    <select id="selectEquipmentList" parameterType="Equipment" resultMap="EquipmentResult">
+        <include refid="selectEquipmentVo"/>
+        <where>
+            <if test="eqName != null  and eqName != ''"> and eqName like concat('%', #{eqName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectEquipmentByEqId" parameterType="Long" resultMap="EquipmentResult">
+        <include refid="selectEquipmentVo"/>
+        where eqId = #{eqId}
+    </select>
+
+    <select id="getEquipmentCount" resultType="com.ruoyi.gym.domain.Equipment">
+        SELECT eqName , num FROM equipment WHERE deleted=0
+    </select>
+
+    <insert id="insertEquipment" parameterType="Equipment" useGeneratedKeys="true" keyProperty="eqId">
+        insert into equipment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eqName != null and eqName != ''">eqName,</if>
+            <if test="num != null and num != ''">num,</if>
+            <if test="eqText != null and eqText != ''">eqText,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="modifytime != null">modifytime,</if>
+            <if test="deleted != null">deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eqName != null and eqName != ''">#{eqName},</if>
+            <if test="num != null and num != ''">#{num},</if>
+            <if test="eqText != null and eqText != ''">#{eqText},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="modifytime != null">#{modifytime},</if>
+            <if test="deleted != null">#{deleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEquipment" parameterType="Equipment">
+        update equipment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eqName != null and eqName != ''">eqName = #{eqName},</if>
+            <if test="num != null and num != ''">num = #{num},</if>
+            <if test="eqText != null and eqText != ''">eqText = #{eqText},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="modifytime != null">modifytime = #{modifytime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+        </trim>
+        where eqId = #{eqId}
+    </update>
+
+    <delete id="deleteEquipmentByEqId" parameterType="Long">
+        update equipment set deleted=1 where eqId = #{eqId}
+    </delete>
+
+    <delete id="deleteEquipmentByEqIds" parameterType="String">
+        update equipment set deleted=1 where eqId in
+        <foreach item="eqId" collection="array" open="(" separator="," close=")">
+            #{eqId}
+        </foreach>
+    </delete>
+</mapper>

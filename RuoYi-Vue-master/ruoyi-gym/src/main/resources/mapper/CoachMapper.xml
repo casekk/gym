@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gym.mapper.CoachMapper">
+
+    <resultMap type="Coach" id="CoachResult">
+        <result property="coachId"    column="coachId"    />
+        <result property="coachName"    column="coachName"    />
+        <result property="coachPhone"    column="coachPhone"    />
+        <result property="coachSex"    column="coachSex"    />
+        <result property="coachAge"    column="coachAge"    />
+        <result property="coachData"    column="coachData"    />
+        <result property="teach"    column="teach"    />
+        <result property="coachWages"    column="coachWages"    />
+        <result property="coachAddress"    column="coachAddress"    />
+        <result property="coachStatic"    column="coachStatic"    />
+        <result property="createtime"    column="createtime"    />
+        <result property="modifytime"    column="modifytime"    />
+        <result property="deleted"    column="deleted"    />
+    </resultMap>
+
+    <sql id="selectCoachVo">
+        select coachId, coachName, coachPhone, coachSex, coachAge, coachData, teach, coachWages, coachAddress, coachStatic, createtime, modifytime, deleted from coach
+    </sql>
+
+    <select id="selectCoachList" parameterType="Coach" resultMap="CoachResult">
+        <include refid="selectCoachVo"/>
+        <where>
+            <if test="coachName != null  and coachName != ''"> and coachName like concat('%', #{coachName}, '%')</if>
+            <if test="coachAddress != null  and coachAddress != ''"> and coachAddress = #{coachAddress}</if>
+            <if test="coachStatic != null "> and coachStatic = #{coachStatic}</if>
+        </where>
+    </select>
+
+    <select id="selectCoachByCoachId" parameterType="Long" resultMap="CoachResult">
+        <include refid="selectCoachVo"/>
+        where coachId = #{coachId}
+    </select>
+    <select id="getAllCoaches" resultType="com.ruoyi.gym.domain.Coach">
+        select * from coach where deleted=0
+    </select>
+
+    <insert id="insertCoach" parameterType="Coach" useGeneratedKeys="true" keyProperty="coachId">
+        insert into coach
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coachName != null and coachName != ''">coachName,</if>
+            <if test="coachPhone != null and coachPhone != ''">coachPhone,</if>
+            <if test="coachSex != null">coachSex,</if>
+            <if test="coachAge != null">coachAge,</if>
+            <if test="coachData != null">coachData,</if>
+            <if test="teach != null">teach,</if>
+            <if test="coachWages != null">coachWages,</if>
+            <if test="coachAddress != null and coachAddress != ''">coachAddress,</if>
+            <if test="coachStatic != null">coachStatic,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="modifytime != null">modifytime,</if>
+            <if test="deleted != null">deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coachName != null and coachName != ''">#{coachName},</if>
+            <if test="coachPhone != null and coachPhone != ''">#{coachPhone},</if>
+            <if test="coachSex != null">#{coachSex},</if>
+            <if test="coachAge != null">#{coachAge},</if>
+            <if test="coachData != null">#{coachData},</if>
+            <if test="teach != null">#{teach},</if>
+            <if test="coachWages != null">#{coachWages},</if>
+            <if test="coachAddress != null and coachAddress != ''">#{coachAddress},</if>
+            <if test="coachStatic != null">#{coachStatic},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="modifytime != null">#{modifytime},</if>
+            <if test="deleted != null">#{deleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCoach" parameterType="Coach">
+        update coach
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coachName != null and coachName != ''">coachName = #{coachName},</if>
+            <if test="coachPhone != null and coachPhone != ''">coachPhone = #{coachPhone},</if>
+            <if test="coachSex != null">coachSex = #{coachSex},</if>
+            <if test="coachAge != null">coachAge = #{coachAge},</if>
+            <if test="coachData != null">coachData = #{coachData},</if>
+            <if test="teach != null">teach = #{teach},</if>
+            <if test="coachWages != null">coachWages = #{coachWages},</if>
+            <if test="coachAddress != null and coachAddress != ''">coachAddress = #{coachAddress},</if>
+            <if test="coachStatic != null">coachStatic = #{coachStatic},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="modifytime != null">modifytime = #{modifytime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+        </trim>
+        where coachId = #{coachId}
+    </update>
+
+    <delete id="deleteCoachByCoachId" parameterType="Long">
+        update coach set deleted=1 where coachId = #{coachId}
+    </delete>
+
+    <delete id="deleteCoachByCoachIds" parameterType="String">
+        update coach set deleted=1 where coachId in
+        <foreach item="coachId" collection="array" open="(" separator="," close=")">
+            #{coachId}
+        </foreach>
+    </delete>
+</mapper>

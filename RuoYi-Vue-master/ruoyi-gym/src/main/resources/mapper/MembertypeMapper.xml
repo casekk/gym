@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gym.mapper.MembertypeMapper">
+
+    <resultMap type="Membertype" id="MembertypeResult">
+        <result property="typeId"    column="typeId"    />
+        <result property="typeName"    column="typeName"    />
+        <result property="typeciShu"    column="typeciShu"    />
+        <result property="typeDay"    column="typeDay"    />
+        <result property="typemoney"    column="typemoney"    />
+        <result property="createtime"    column="createtime"    />
+        <result property="modifytime"    column="modifytime"    />
+        <result property="deleted"    column="deleted"    />
+        <result property="remarkCard"    column="remarkCard"    />
+    </resultMap>
+
+    <sql id="selectMembertypeVo">
+        SELECT typeId,typeName,typeciShu,typemoney,createtime,modifytime,deleted,remarkCard FROM membertype
+    </sql>
+
+    <select id="selectMembertypeList" parameterType="Membertype" resultMap="MembertypeResult">
+        <include refid="selectMembertypeVo"/>
+        <where>
+            <if test="typeName != null  and typeName != ''"> and typeName like concat('%', #{typeName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectMembertypeByTypeId" parameterType="Long" resultMap="MembertypeResult">
+        <include refid="selectMembertypeVo"/>
+        where typeId = #{typeId}
+    </select>
+    <select id="getAllTypes" resultType="com.ruoyi.gym.domain.Membertype">
+        select * from membertype where deleted=0
+    </select>
+
+    <insert id="insertMembertype" parameterType="Membertype" useGeneratedKeys="true" keyProperty="typeId">
+        insert into membertype
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeName != null and typeName != ''">typeName,</if>
+            <if test="typeciShu != null">typeciShu,</if>
+            <if test="typeDay != null">typeDay,</if>
+            <if test="typemoney != null">typemoney,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="modifytime != null">modifytime,</if>
+            <if test="deleted != null">deleted,</if>
+            <if test="remarkCard != null">remarkCard,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeName != null and typeName != ''">#{typeName},</if>
+            <if test="typeciShu != null">#{typeciShu},</if>
+            <if test="typeDay != null">#{typeDay},</if>
+            <if test="typemoney != null">#{typemoney},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="modifytime != null">#{modifytime},</if>
+            <if test="deleted != null">#{deleted},</if>
+            <if test="remarkCard != null">#{remarkCard},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMembertype" parameterType="Membertype">
+        update membertype
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="typeName != null and typeName != ''">typeName = #{typeName},</if>
+            <if test="typeciShu != null">typeciShu = #{typeciShu},</if>
+            <if test="typeDay != null">typeDay = #{typeDay},</if>
+            <if test="typemoney != null">typemoney = #{typemoney},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="modifytime != null">modifytime = #{modifytime},</if>
+            <if test="deleted != null">deleted = #{deleted},</if>
+            <if test="remarkCard != null">remarkCard = #{remarkCard},</if>
+        </trim>
+        where typeId = #{typeId}
+    </update>
+
+    <delete id="deleteMembertypeByTypeId" parameterType="Long">
+        update membertype set deleted=1 where typeId = #{typeId}
+    </delete>
+
+    <delete id="deleteMembertypeByTypeIds" parameterType="String">
+        update membertype set deleted=1 where typeId in
+        <foreach item="typeId" collection="array" open="(" separator="," close=")">
+            #{typeId}
+        </foreach>
+    </delete>
+</mapper>
